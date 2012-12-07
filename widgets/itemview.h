@@ -36,12 +36,12 @@ class QAction;
 class QTimer;
 class GroupedView;
 
-class ListViewEventHandler : public QObject
+class EscapeKeyEventHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    ListViewEventHandler(QAbstractItemView *v, QAction *a);
+    EscapeKeyEventHandler(QAbstractItemView *v, QAction *a);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -49,6 +49,20 @@ protected:
 private:
     QAbstractItemView *view;
     QAction *act;
+};
+
+class MouseEventHandler : public QObject
+{
+    Q_OBJECT
+
+public:
+    MouseEventHandler(QAbstractItemView *v);
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+
+private:
+    QAbstractItemView *view;
 };
 
 #ifndef ENABLE_KDE_SUPPORT

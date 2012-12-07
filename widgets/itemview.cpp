@@ -67,19 +67,14 @@ void ItemView::setup()
     }
 }
 
-ListViewEventHandler::ListViewEventHandler(QAbstractItemView *v, QAction *a)
+EscapeKeyEventHandler::EscapeKeyEventHandler(QAbstractItemView *v, QAction *a)
     : QObject(v)
     , view(v)
     , act(a)
 {
 }
 
-// HACK time. For some reason, IconView is not always re-drawn when mouse leaves the view.
-// We sometimes get an item that is left in the mouse-over state. So, work-around this by
-// keeping track of when mouse is over listview.
-static QWidget *mouseWidget=0;
-
-bool ListViewEventHandler::eventFilter(QObject *obj, QEvent *event)
+bool EscapeKeyEventHandler::eventFilter(QObject *obj, QEvent *event)
 {
     if (view->hasFocus() && QEvent::KeyRelease==event->type() && static_cast<QKeyEvent *>(event)->key()==Qt::Key_Escape) {
         if (act->isEnabled()) {
@@ -87,6 +82,21 @@ bool ListViewEventHandler::eventFilter(QObject *obj, QEvent *event)
         }
         return true;
     }
+    return QObject::eventFilter(obj, event);
+}
+
+MouseEventHandler::MouseEventHandler(QAbstractItemView *v)
+    : QObject(v)
+    , view(v)
+{
+}
+
+// HACK time. For some reason, IconView is not always re-drawn when mouse leaves the view.
+// We sometimes get an item that is left in the mouse-over state. So, work-around this by
+// keeping track of when mouse is over listview.
+static QWidget *mouseWidget=0;
+bool MouseEventHandler::eventFilter(QObject *obj, QEvent *event)
+{
     if (QEvent::Enter==event->type()) {
         mouseWidget=view;
         view->viewport()->update();
@@ -500,7 +510,8 @@ ItemView::ItemView(QWidget *p)
     Icon::init(backButton);
     treeView->setPageDefaults();
     iconGridSize=listGridSize=listView->gridSize();
-    listView->installEventFilter(new ListViewEventHandler(listView, backAction));
+    listView->installEventFilter(new EscapeKeyEventHandler(listView, backAction));
+    listView->installEventFilter(new MouseEventHandler(listView));
 }
 
 ItemView::~ItemView()

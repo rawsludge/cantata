@@ -30,8 +30,6 @@ class QAction;
 
 class ActionItemDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
-
 public:
     static void setup();
 
@@ -56,13 +54,6 @@ public:
 
     void drawIcons(QPainter *painter, const QRect &r, bool mouseOver, bool rtl, bool iconMode, const QModelIndex &index) const;
 
-public Q_SLOTS:
-    bool helpEvent(QHelpEvent *e, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index);
-
-private:
-    QAction * getAction(QAbstractItemView *view, const QModelIndex &index);
-
-public:
     QAction *act1;
     QAction *act2;
     QAction *toggle;
